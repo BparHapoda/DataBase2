@@ -9,6 +9,7 @@ CREATE TABLE curators (
 
 
         CREATE TABLE faculties (
+
         id serial NOT NULL ,
         financing money NOT NULL DEFAULT '0' CHECK (financing>='0'),
         name varchar(100) NOT NULL ,
