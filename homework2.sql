@@ -129,17 +129,35 @@ CREATE TABLE curators (
         INNER JOIN groups
         ON true
 
+       SELECT teachers.name,teachers.surname,groups.name
+       FROM teachers,groups
+
+
         --2. Вывести названия факультетов, фонд финансирования
         --  кафедр которых превышает фонд финансирования фа-
         --  культета.
 
-        SET lc_monetary TO "en_US.UTF-8";
+        SET lc_monetary TO "en_US.UTF-8"
         SELECT faculties.name AS Факультет,faculties.financing AS Финансирование_факультета,
         SUM (departments.financing) AS Финансирование_кафедр_факультета
         FROM departments
         INNER JOIN faculties ON departments.facultyid=faculties.id
         GROUP BY faculties.name,faculties.financing
         HAVING SUM (departments.financing) > faculties.financing
+
+        SET lc_monetary TO "en_US.UTF-8";
+     SELECT faculties.name AS Название_факультета,faculties.financing AS Финансирование_факультета,
+     (SELECT SUM (departments.financing)
+     	 FROM departments
+     	WHERE faculties.id = departments.facultyId
+     	) AS Финансирование_кафедр_факультета
+     	 FROM faculties
+     	 GROUP BY faculties.id,faculties.name,faculties.financing
+     	HAVING (SELECT SUM (departments.financing)
+     	 FROM departments
+     	WHERE faculties.id = departments.facultyId
+     	) > faculties.financing
+
 
         --3. Вывести фамилии кураторов групп и названия групп, ко-
         --  торые они курируют.
@@ -148,6 +166,12 @@ CREATE TABLE curators (
         FROM groupscurators
         INNER JOIN groups ON groupscurators.groupid=groups.id
         INNER JOIN curators ON groupscurators.curatorid=curators.id
+
+SELECT curators.name,curators.surname,groups.name
+FROM curators,groups
+WHERE (curators.id,groups.id) IN (
+SELECT groupscurators.curatorId,groupscurators.groupId
+FROM groupscurators )
 
         --4. Вывести имена и фамилии преподавателей, которые читают
         --  лекции у группы “300”.
@@ -159,6 +183,26 @@ CREATE TABLE curators (
         INNER JOIN teachers ON lectures.teacherid=teachers.id
         GROUP BY teachers.surname,groups.name
         HAVING groups.name = 'Группа 300'
+
+        SELECT teachers.name || ' ' || teachers.surname
+        FROM teachers
+        WHERE teachers.id =
+        (
+        SELECT lectures.teacherId
+        FROM lectures
+        WHERE lectures.id=
+        (
+        SELECT groupslectures.lectureId
+        FROM groupslectures
+        WHERE groupslectures.groupId=
+        (
+        SELECT groups.id
+        FROM groups
+        WHERE groups.name = 'Группа 300'
+        )
+        )
+        )
+
 
         --5. Вывести фамилии преподавателей и названия факультетов
         --  на которых они читают лекции.

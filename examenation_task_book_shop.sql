@@ -180,7 +180,8 @@ WHERE
 --2. Показать все книги, в которых первая буква названия либо
 --«А», либо «З».
 
-SELECT name
+SELECT
+     name
 FROM books b
 WHERE b.name LIKE 'З%' OR b.name LIKE 'А%'
 ORDER BY b.name
@@ -200,7 +201,8 @@ ORDER BY b.name
 
 --4. Показать все книги, в названии которых есть слово «Microsoft
 --», но нет слова «Windows».
-SELECT name AS Название_______книги
+SELECT
+     name AS Название_______книги
 FROM books
 WHERE name LIKE '%Microsoft%' AND name NOT LIKE '%Windows%'
 ORDER BY name
