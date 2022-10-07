@@ -107,7 +107,7 @@ CREATE FUNCTION track_teacher_delete () RETURNS trigger AS $$
 BEGIN
 -- С удалением у меня не получилось,тк при удалении из teachers нужно оставить ссылку на учителя
 -- которого нет в таблице teachers,поэтому я его добавляю в teacher_deleted_infos без ссылки на teacher_manipulations
--- а в teacher_manipulations его не сохранить
+-- а в teacher_manipulations его не сохранить. может быть что то с какскадным удалением ,но я не понял как
 
 --INSERT INTO teacher_manipulations(date,action_id,teacher_id)
 --VALUES
